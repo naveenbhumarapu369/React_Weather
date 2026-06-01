@@ -9,11 +9,13 @@ export default function Search(){
     let [city,setCity] = useState("");
     let [info,setInfo] = useState({});
     let [er,setEr] = useState(false);
+    let [lod,setLod] = useState(false);
     let handChange = (e)=>{
         setCity(e.target.value);
     }
     let handClick = async(e)=>{
         setEr(false);
+        setLod(true);
         e.preventDefault();
         let APIurl = "https://api.openweathermap.org/data/2.5/weather?q=";
         let APIkey = "d083aad42f32ed4edb352265c536a527";
@@ -29,12 +31,14 @@ export default function Search(){
                 lon:res.coord.lon,
                 lat:res.coord.lat
             })
+            setLod(false);
         }
         catch(err){
+            console.log(err);
             setEr(true);
+            setLod(false);
         }
     }
-    
     return(
         <div className='search'>
             <h1>Ultra Weather Report</h1>
@@ -43,17 +47,16 @@ export default function Search(){
                     required
                     id="filled-required"
                     label="City Name"
-                    variant="filled"
+                    variant="outlined"
                     onChange={handChange}
                     value={city}
-                    />
+                />
                     <br></br><br></br>
                     <Button type="submit" variant="contained" startIcon={<SearchIcon />}>
-                   
                     Search
-                </Button>
+                    </Button>
             </form>
-            {!er?info.city&&<Caard info={info}/>:<Alert className='alert' severity="error">City Not Found...!</Alert>}
+            {!lod?(!er?info.city&&<Caard info={info}/>:<Alert className='alert' severity="error">City Not Found...!</Alert>):<div className='loding'><span><h1>Loding..</h1></span><span className='dot'><h1>.</h1></span></div>}
             
         </div>
     );
